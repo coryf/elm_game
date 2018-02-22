@@ -1,4 +1,5 @@
-# Game Dev with Elm and SVG
+# Game Dev 
+# with Elm and SVG
 
 ### Presented by Cory Fabre
 
@@ -6,11 +7,16 @@
 
 ## Elm intro
 
-- Purely Functionl
-- Transpiles (using haskell) to javascript and runs in the browser
-- No runtime exceptions! (strict typing and null safety)
+- Purely Functional
+- Transpiles to javascript and runs in the browser
+- No runtime exceptions!
 
-Notes:
+Note:
+Purely functional - Functions are pure and always return the same output given
+the same input. No hidden state.
+
+No runtime exception: strict typing and null safety
+
 http://elm-lang.org/docs/syntax
 
 ---
@@ -60,7 +66,7 @@ content that has "quotation marks".
 1 :: 2 :: 3 :: 4 :: []
 ```
 
-Notes:
+Note:
 Order list of items of the same type. Insertion is at the head of the list.
 
 ---
@@ -74,7 +80,7 @@ Order list of items of the same type. Insertion is at the head of the list.
 (1.0, True, 'a') : (Float, String, Char)
 ```
 
-Notes:
+Note:
 Tuples are like anonymous structures. They can hold a mixer of types. The type
 of a tuple is defined by the type of its components.
 
@@ -146,7 +152,7 @@ addOne 5
   -- 6
 ```
 
-Notes:
+Note:
 Currying-based functional languages (similar to Haskell and ML)
 Tuple calling vs Currying
 No parentheses or commas in the function call.
@@ -168,7 +174,7 @@ in
 ```
 
 
-Notes:
+Note:
 Let expression define scope constants
 
 
@@ -190,8 +196,9 @@ add 1 2
 add 3 (add 1 (2))
 ```
 
-Notes:
-Similar to Elixir syntax, but the argument is added to the end
+Note:
+Similar to Elixir syntax, but the argument is added to the end because of how
+currying works.
 
 ---
 
