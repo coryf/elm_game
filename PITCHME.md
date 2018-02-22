@@ -210,8 +210,8 @@ currying works. Can reduce parens and lead to better readability.
 
 - Main function
 - Model
-- Update
 - Subscriptions
+- Update
 - View
 
 ---
@@ -223,8 +223,18 @@ update, subscription, and view functions.
 
 @fa[arrow-down]
 
-+++?code=Main.elm&lang=elm
-@[17-24]
++++
+
+```elm
+main : Program Never Model Msg
+main =
+    Html.program
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
+```
 
 ---
 
@@ -234,9 +244,59 @@ Sets up the type of the model and initial state.
 
 @fa[arrow-down]
 
-+++?code=Main.elm&lang=elm
-@[114-135](Model Type)
-@[138-154](Model Initial State)
++++
+
+```elm
+type alias Ball =
+    { position : Vec2
+    , velocity : Vec2
+    , acceleration : Vec2
+    , restitution : Float
+    , radius : Float
+    }
+
+type alias Paddle =
+    { position : Vec2, velocity : Vec2, size : Vec2 }
+
+type alias Model =
+    { ball : Ball, paddle : Paddle, score : Int, gameOver : Bool }
+
+initModel : Model
+initModel =
+    { ball =
+        { position = Vec2 0 0
+        , velocity = Vec2 400 0
+        , acceleration = Vec2 0 0
+        , restitution = -0.9
+        , radius = 10
+        }
+    , paddle =
+        { position = Vec2 400 900, velocity = Vec2 0 0, size = Vec2 200 10 }
+    , score = 0
+    , gameOver = False
+    }
+
+init : ( Model, Cmd Msg )
+init =
+    ( initModel, Cmd.none )
+```
+
+@[1-13](Model Type)
+@[15-32](Model Initial State)
+
+---
+
+### Subscribe
+
+```elm
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch
+        [ Keyboard.downs KeyDownMsg
+        , Keyboard.ups KeyUpMsg
+        , AnimationFrame.diffs FrameDiffMsg
+        ]
+```
 
 ---
 
@@ -246,18 +306,192 @@ Called when a message is received and returns the next version of the model.
 
 @fa[arrow-down]
 
-+++?code=Main.elm&lang=elm
-@[333-343](update function)
++++
+
+```
+type Msg
+    = KeyDownMsg Keyboard.KeyCode
+    | KeyUpMsg Keyboard.KeyCode
+    | FrameDiffMsg Time
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        KeyUpMsg keyCode ->
+            ( handleKeyUp (Char.fromCode keyCode) model, Cmd.none )
+
+        KeyDownMsg keyCode ->
+            ( handleKeyDown (Char.fromCode keyCode) model, Cmd.none )
+
+        FrameDiffMsg timeDiff ->
+            ( updateFrame (1 / 60) model, Cmd.none )
+```
+@[1-4](Msg Type)
+@[5-15](Msg Handler)
+
+
+Note:
+We define all possible types of messages that we will handle. In the update
+function, we receive a message and the current model state, and we return
+the next model state based on the action taken as a result of the message.
+
+---
+
+### View
+
+- HTML building functions
+- Virtual DOM rendering
+- SVG functions
+
++++
+
+```elm
+view : Model -> Html Msg
+view model =
+    div
+        [ class "wrapper" ]
+        [ h1
+            [ style
+                [ ( "color", "red" )
+                , ( "fontFamily", "Comic Sans MS" )
+                ]
+            ]
+            [ text "Hello World" ]
+        ]
+```
+
+Note:
+The view function take a model and returns Html Msg type. The returned HTML
+can send messages based on browser events (onClick, onChange), so we need to
+pass-through the Msg type as a component of the Html type thats returned.
+
++++
+
+```elm
+view : Model -> Html Msg
+view model =
+    svg
+        [ width "100%", height "100%", viewBox viewBoxString, overflow "hidden" ]
+        ([ background
+         , titleLabel "A Game"
+         , scoreLabel (toString model.score)
+         , ballView model.ball
+         , paddleView model.paddle
+         , gameOverLabel model.gameOver
+         ]
+             ++ (vectors model.ball)
+        )
+```
+
++++
+
+```elm
+ballView : Ball -> Svg msg
+ballView { position, radius } =
+    let
+        { x, y } =
+            position
+    in
+        circle
+            [ fill "blue", cx (toString x), cy (toString y), r (toString radius) ]
+            []
+```
 
 ---
 
 ### Setting up the Game
-* animationFrame - the game "loop"
 
-### Physics
-* 2D Vector
-    * _Picture_ Direction and magnitude expressed as x,y components
-    * used to describe position, velocity, and acceleration
-    * Faking bounce, reflection of velocity instead of acceleration from force
-* Vector Math
+animationFrame
 
+@fa[arrow-down]
+
+Subscription
+
+@fa[arrow-down]
+
+Update Model
+
+@fa[arrow-down]
+
+View
+
+---
+
+## Physics
+
+---
+
+### 2D Vector
+
+- Direction and magnitude expressed as x,y components
+- Line is two Vectors for each endpoint
+
++++
+
+### Types
+
+```elm
+type alias Vec2 = { x : Float , y : Float }
+type alias Line2 = ( Vec2, Vec2 ) 
+```
+
++++
+
+### Vector Math
+
+
+```elm
+scaleVec2 : Float -> Vec2 -> Vec2
+scaleVec2 scalar v = { x = v.x * scalar, y = v.y * scalar }
+
+addVec2 : Vec2 -> Vec2 -> Vec2
+addVec2 v1 v2 = { x = v1.x + v2.x, y = v1.y + v2.y }
+
+multVec2 : Vec2 -> Vec2 -> Vec2
+multVec2 v1 v2 = { x = v1.x * v2.x, y = v1.y * v2.y }
+```
+
+
+---
+
+### Position Velocity Acceleration
+
+- position = x,y (magnitude and direction)
+- velocity = meters per second
+- acceleration = meters per second per second
+
+Note:
+Show game with vectors draw. Velocity is the rate and direction of change in
+position. Acceleration is the rate and direction of change in velocity.
+
+---
+
+### Gravity
+
+A constant downward acceleration. 9.81 m/s^2 near the Earth's surface.
+
+---
+
+### Faking Bounce
+
+- F = ma
+- Reflection of Velocity
+- Restitution (Bounceability)
+
+Note:
+Faking bounce as a reflection of velocity. Velocity doesn't change 
+instantaneously in the real world. Instead, the ground applies a force against
+the ball (and the ball atoms against other ball atoms) to create an upward
+acceleration. The ball also applies a force against the ground (earth), but that
+force can be ignore for most practical purposes. There is also heat lost in the
+process of bouncing. All of these factors are being faked by a single number
+called restitution that reflects and dampens the velocity.
+
+---
+
+### Collision Detection
+
+- Wall: Bounding x and y checks
+- Paddle: Line segment intersection
+- Scoring: Collide with top of paddle
+- Game over: Collide with bottom of wall
