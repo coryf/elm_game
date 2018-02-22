@@ -21,7 +21,7 @@ http://elm-lang.org/docs/syntax
 
 ---
 
-## Comments
+### Comments
 
 ```elm
 -- a single line comment
@@ -33,7 +33,7 @@ http://elm-lang.org/docs/syntax
 
 ---
 
-## Literals
+### Literals
 
 ```elm
 -- Boolean
@@ -54,7 +54,7 @@ content that has "quotation marks".
 
 ---
 
-## List
+### List
 
 ```elm
 ["hello", "world"]
@@ -70,7 +70,7 @@ Order list of items of the same type. Insertion is at the head of the list.
 
 ---
 
-## Tuples
+### Tuples
 
 ```elm
 (1.0, True, 'a')
@@ -86,7 +86,7 @@ of a tuple is defined by the type of its components.
 
 ---
 
-## Records
+### Records
 
 ```elm
 point =                         -- create a record
@@ -107,7 +107,7 @@ type alias Location =           -- type aliases for records
 
 ---
 
-## Patern Matching
+### Patern Matching
 
 ```elm
 
@@ -120,7 +120,7 @@ dist {x,y} =
 
 ---
 
-## Currying
+### Currying
 
 ```elm
 add : (Number, Number) -> Number
@@ -163,7 +163,7 @@ Partial application of arguments returns a function.
 
 ---
 
-## Let Expressions
+### Let Expressions
 
 ```elm
 let
@@ -183,7 +183,7 @@ Let expression define scope constants
 
 ---
 
-## Pipelining
+### Pipelining
 
 ```elm
 -- (arg |> func) is the same as (func arg)
@@ -194,11 +194,12 @@ add 1 2
 
 2 |> add 1
   |> add 3
-
 add 3 (add 1 (2))
 ```
 
 @[1] Pipe operator is an alias for function application
+@[3-5] Single function pipe
+@[7-9] Multiple function pipe
 
 Note:
 Similar to Elixir syntax, but the argument is added to the end because of how
@@ -206,10 +207,10 @@ currying works. Can reduce parens and lead to better readability.
 
 ---
 
-## Setting up the Game
+### Setting up the Game
 * animationFrame - the game "loop"
 
-## Physics
+### Physics
 * 2D Vector
     * _Picture_ Direction and magnitude expressed as x,y components
     * used to describe position, velocity, and acceleration
