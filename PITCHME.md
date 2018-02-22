@@ -308,6 +308,8 @@ subscriptions model =
         , AnimationFrame.diffs FrameDiffMsg
         ]
 ```
+@[1-4](Msg Type)
+@[5-11](Subscriptions Function)
 
 ---
 
@@ -332,8 +334,6 @@ update msg model =
         FrameDiffMsg timeDiff ->
             ( updateFrame (1 / 60) model, Cmd.none )
 ```
-@[1-4](Msg Type)
-@[5-16](Msg Handler)
 
 
 Note:
