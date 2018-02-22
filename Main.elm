@@ -98,7 +98,7 @@ segmentIntersects ( l1v1, l1v2 ) ( l2v1, l2v2 ) =
             || (w4 == Colinear && (between l2v1 l1v2 l2v2))
 
 
-type alias PhysicalObject =
+type alias Ball =
     { position : Vec2
     , velocity : Vec2
     , acceleration : Vec2
@@ -114,26 +114,19 @@ type alias Paddle =
 
 
 type alias Model =
-    { ball : PhysicalObject
+    { ball : Ball
     , paddle : Paddle
     }
 
 
-initPhysicalObject : PhysicalObject
-initPhysicalObject =
-    { position = Vec2 0 0
-    , velocity = Vec2 400 0
-    , acceleration = Vec2 0 0
-    , restitution = -0.9
-    , radius = 10
-    }
-
-
-model : Model
-model =
+initModel : Model
+initModel =
     { ball =
-        { initPhysicalObject
-            | position = Vec2 100 100
+        { position = Vec2 0 0
+        , velocity = Vec2 400 0
+        , acceleration = Vec2 0 0
+        , restitution = -0.9
+        , radius = 10
         }
     , paddle =
         { position = Vec2 500 900
@@ -144,7 +137,7 @@ model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( model, Cmd.none )
+    ( initModel, Cmd.none )
 
 
 
@@ -160,12 +153,12 @@ gravity =
     9.8 * 100
 
 
-applyGravity : PhysicalObject -> PhysicalObject
+applyGravity : Ball -> Ball
 applyGravity object =
     { object | acceleration = Vec2 0 gravity }
 
 
-updatePosition : Time -> PhysicalObject -> PhysicalObject
+updatePosition : Time -> Ball -> Ball
 updatePosition t object =
     { object
         | position = addVec2 object.position (scaleVec2 t object.velocity)
@@ -177,7 +170,7 @@ updatePosition t object =
     }
 
 
-collideWalls : Vec2 -> PhysicalObject -> PhysicalObject
+collideWalls : Vec2 -> Ball -> Ball
 collideWalls prevPosition ({ radius } as ball) =
     let
         { x, y } =
@@ -204,7 +197,7 @@ collideWalls prevPosition ({ radius } as ball) =
         { ball | velocity = multVec2 ball.velocity (Vec2 bounceX bounceY) }
 
 
-collidePaddle : Vec2 -> Paddle -> PhysicalObject -> PhysicalObject
+collidePaddle : Vec2 -> Paddle -> Ball -> Ball
 collidePaddle prevPosition paddle ({ position, radius, velocity } as ball) =
     let
         ballLine =
@@ -319,7 +312,7 @@ titleLabel =
     label 50 50
 
 
-ball : PhysicalObject -> Svg msg
+ball : Ball -> Svg msg
 ball { position, radius } =
     let
         { x, y } =
@@ -387,7 +380,7 @@ vector kind start offset =
         ]
 
 
-vectors : PhysicalObject -> List (Svg msg)
+vectors : Ball -> List (Svg msg)
 vectors object =
     (vector Position (Vec2 0 0) object.position)
         ++ (vector Velocity object.position (scaleVec2 0.2 object.velocity))
