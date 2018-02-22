@@ -24,16 +24,16 @@ main =
         }
 
 
-
--- MODEL
-
-
 res =
     1000
 
 
 margin =
     50
+
+
+
+-- Vector Math
 
 
 type alias Vec2 =
@@ -105,6 +105,10 @@ segmentIntersects ( l1v1, l1v2 ) ( l2v1, l2v2 ) =
             || (w2 == Colinear && (between l1v1 l2v2 l1v2))
             || (w3 == Colinear && (between l2v1 l1v1 l2v2))
             || (w4 == Colinear && (between l2v1 l1v2 l2v2))
+
+
+
+-- MODEL
 
 
 type alias Ball =

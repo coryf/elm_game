@@ -226,6 +226,24 @@ update, subscription, and view functions.
 +++?code=Main.elm&lang=elm
 @[17-24]
 
+---
+
+### Model
+
+Sets up the type of the model and initial state.
+
+@fa[arrow-down]
+
++++?code=Main.elm&lang=elm
+@[114-135] Model Type
+
+@fa[arrow-down]
+
++++?code=Main.elm&lang=elm
+@[138-154] Model Initial State
+
+---
+
 ### Setting up the Game
 * animationFrame - the game "loop"
 
