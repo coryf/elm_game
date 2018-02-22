@@ -163,12 +163,6 @@ init =
 -- UPDATE
 
 
-type Msg
-    = KeyDownMsg Keyboard.KeyCode
-    | KeyUpMsg Keyboard.KeyCode
-    | FrameDiffMsg Time
-
-
 gravity =
     9.8 * 100
 
@@ -307,40 +301,46 @@ resetGame model =
     initModel
 
 
+handleKeyUp : Char -> Model -> Model
+handleKeyUp keyChar ({ paddle } as model) =
+    { model | paddle = movePaddle paddle 0 }
+
+
+handleKeyDown : Char -> Model -> Model
+handleKeyDown keyChar ({ paddle } as model) =
+    case keyChar of
+        'A' ->
+            -- Move Left
+            { model | paddle = movePaddle paddle -1 }
+
+        'D' ->
+            -- Move Right
+            { model | paddle = movePaddle paddle 1 }
+
+        'R' ->
+            resetGame model
+
+        _ ->
+            model
+
+
+type Msg
+    = KeyDownMsg Keyboard.KeyCode
+    | KeyUpMsg Keyboard.KeyCode
+    | FrameDiffMsg Time
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg ({ paddle } as model) =
+update msg model =
     case msg of
         KeyUpMsg keyCode ->
-            ( { model | paddle = movePaddle paddle 0 }, Cmd.none )
+            ( handleKeyUp (Char.fromCode keyCode) model, Cmd.none )
 
         KeyDownMsg keyCode ->
-            let
-                keyChar =
-                    Char.fromCode keyCode
-            in
-                case keyChar of
-                    'A' ->
-                        -- Move Left
-                        ( { model | paddle = movePaddle paddle -1 }, Cmd.none )
-
-                    'D' ->
-                        -- Move Right
-                        ( { model | paddle = movePaddle paddle 1 }, Cmd.none )
-
-                    'R' ->
-                        ( resetGame model, Cmd.none )
-
-                    _ ->
-                        ( model, Cmd.none )
+            ( handleKeyDown (Char.fromCode keyCode) model, Cmd.none )
 
         FrameDiffMsg timeDiff ->
-            let
-                -- Fake time for now, but look into looping 1/60 (framerate)
-                -- chunks of (Time.inSeconds timeDiff)
-                t =
-                    1 / 60
-            in
-                ( updateFrame t model, Cmd.none )
+            ( updateFrame (1 / 60) model, Cmd.none )
 
 
 
