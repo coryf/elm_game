@@ -288,6 +288,12 @@ init =
 
 ### Subscribe
 
+Tells Elm which global messages you want to listen for.
+
+@fa[arrow-down]
+
++++
+
 ```elm
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -308,7 +314,7 @@ Called when a message is received and returns the next version of the model.
 
 +++
 
-```
+```elm
 type Msg
     = KeyDownMsg Keyboard.KeyCode
     | KeyUpMsg Keyboard.KeyCode
@@ -327,7 +333,7 @@ update msg model =
             ( updateFrame (1 / 60) model, Cmd.none )
 ```
 @[1-4](Msg Type)
-@[5-15](Msg Handler)
+@[5-16](Msg Handler)
 
 
 Note:
@@ -342,6 +348,8 @@ the next model state based on the action taken as a result of the message.
 - HTML building functions
 - Virtual DOM rendering
 - SVG functions
+
+@fa[arrow-down]
 
 +++
 
@@ -495,3 +503,11 @@ called restitution that reflects and dampens the velocity.
 - Paddle: Line segment intersection
 - Scoring: Collide with top of paddle
 - Game over: Collide with bottom of wall
+
+---
+
+## Game Over
+
+- https://github.com/coryf/elm_game
+- https://gitpitch.com/coryf/elm_game
+- https://coryf.github.io/elm_game/
