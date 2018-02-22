@@ -1,5 +1,5 @@
-# Game Dev 
-# with Elm and SVG
+# Elm Game Dev
+## with SVG
 
 ### Presented by Cory Fabre
 
