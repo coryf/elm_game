@@ -223,7 +223,7 @@ update, subscription, and view functions.
 
 @fa[arrow-down]
 
-+++?code=Main.elm
++++?code=Main.elm&lang=elm
 @[17-24]
 
 ### Setting up the Game
