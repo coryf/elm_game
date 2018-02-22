@@ -121,18 +121,11 @@ type alias Ball =
 
 
 type alias Paddle =
-    { position : Vec2
-    , velocity : Vec2
-    , size : Vec2
-    }
+    { position : Vec2, velocity : Vec2, size : Vec2 }
 
 
 type alias Model =
-    { ball : Ball
-    , paddle : Paddle
-    , score : Int
-    , gameOver : Bool
-    }
+    { ball : Ball, paddle : Paddle, score : Int, gameOver : Bool }
 
 
 initModel : Model
@@ -145,10 +138,7 @@ initModel =
         , radius = 10
         }
     , paddle =
-        { position = Vec2 400 900
-        , velocity = Vec2 0 0
-        , size = Vec2 200 10
-        }
+        { position = Vec2 400 900, velocity = Vec2 0 0, size = Vec2 200 10 }
     , score = 0
     , gameOver = False
     }
