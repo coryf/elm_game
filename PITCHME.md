@@ -390,6 +390,7 @@ view model =
              ++ (vectors model.ball)
         )
 ```
+@[8](ballView nested SVG component)
 
 +++
 
