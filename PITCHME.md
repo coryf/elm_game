@@ -295,6 +295,11 @@ Tells Elm which global messages you want to listen for.
 +++
 
 ```elm
+type Msg
+    = KeyDownMsg Keyboard.KeyCode
+    | KeyUpMsg Keyboard.KeyCode
+    | FrameDiffMsg Time
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
@@ -315,11 +320,6 @@ Called when a message is received and returns the next version of the model.
 +++
 
 ```elm
-type Msg
-    = KeyDownMsg Keyboard.KeyCode
-    | KeyUpMsg Keyboard.KeyCode
-    | FrameDiffMsg Time
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
