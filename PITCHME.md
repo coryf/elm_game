@@ -309,7 +309,7 @@ subscriptions model =
         ]
 ```
 @[1-4](Msg Type)
-@[5-11](Subscriptions Function)
+@[6-12](Subscriptions Function)
 
 ---
 
