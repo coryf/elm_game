@@ -8,6 +8,7 @@ import Time exposing (Time)
 import Keyboard
 import Mouse
 import Window
+import Char
 
 
 -- MAIN
@@ -25,6 +26,14 @@ main =
 
 
 -- MODEL
+
+
+res =
+    1000
+
+
+margin =
+    50
 
 
 type alias Vec2 =
@@ -109,6 +118,7 @@ type alias Ball =
 
 type alias Paddle =
     { position : Vec2
+    , velocity : Vec2
     , size : Vec2
     }
 
@@ -116,6 +126,8 @@ type alias Paddle =
 type alias Model =
     { ball : Ball
     , paddle : Paddle
+    , score : Int
+    , gameOver : Bool
     }
 
 
@@ -129,9 +141,12 @@ initModel =
         , radius = 10
         }
     , paddle =
-        { position = Vec2 500 900
-        , size = Vec2 300 10
+        { position = Vec2 400 900
+        , velocity = Vec2 0 0
+        , size = Vec2 200 10
         }
+    , score = 0
+    , gameOver = False
     }
 
 
@@ -145,7 +160,8 @@ init =
 
 
 type Msg
-    = KeyMsg Keyboard.KeyCode
+    = KeyDownMsg Keyboard.KeyCode
+    | KeyUpMsg Keyboard.KeyCode
     | FrameDiffMsg Time
 
 
@@ -158,8 +174,8 @@ applyGravity object =
     { object | acceleration = Vec2 0 gravity }
 
 
-updatePosition : Time -> Ball -> Ball
-updatePosition t object =
+updateBallPosition : Time -> Ball -> Ball
+updateBallPosition t object =
     { object
         | position = addVec2 object.position (scaleVec2 t object.velocity)
         , velocity = addVec2 object.velocity (scaleVec2 t object.acceleration)
@@ -170,9 +186,12 @@ updatePosition t object =
     }
 
 
-collideWalls : Vec2 -> Ball -> Ball
-collideWalls prevPosition ({ radius } as ball) =
+collideWalls : Vec2 -> Model -> Model
+collideWalls prevPosition ({ ball } as model) =
     let
+        radius =
+            ball.radius
+
         { x, y } =
             ball.position
 
@@ -180,7 +199,7 @@ collideWalls prevPosition ({ radius } as ball) =
             ( ball.velocity.x < 0, ball.velocity.y < 0 )
 
         ( hitLeft, hitRight, hitTop, hitBottom ) =
-            ( x < radius, x > 1000 - radius, y < radius, y > 1000 - radius )
+            ( x < radius, x > res - radius, y < radius, y > res - radius )
 
         bounceX =
             if (hitRight && not movingLeft) || (hitLeft && movingLeft) then
@@ -194,12 +213,21 @@ collideWalls prevPosition ({ radius } as ball) =
             else
                 1
     in
-        { ball | velocity = multVec2 ball.velocity (Vec2 bounceX bounceY) }
+        { model
+            | ball =
+                { ball
+                    | velocity = multVec2 ball.velocity (Vec2 bounceX bounceY)
+                }
+            , gameOver = hitBottom
+        }
 
 
-collidePaddle : Vec2 -> Paddle -> Ball -> Ball
-collidePaddle prevPosition paddle ({ position, radius, velocity } as ball) =
+collidePaddle : Vec2 -> Model -> Model
+collidePaddle prevPosition ({ paddle, ball } as model) =
     let
+        { position, radius, velocity } =
+            ball
+
         ballLine =
             ( prevPosition, ball.position )
 
@@ -215,52 +243,101 @@ collidePaddle prevPosition paddle ({ position, radius, velocity } as ball) =
         bottomLine =
             ( Vec2 left bottom, Vec2 right bottom )
 
-        crossTop =
+        hitTop =
             segmentIntersects ballLine topLine && velocity.y > 0
 
-        crossBottom =
+        hitBottom =
             segmentIntersects ballLine bottomLine && velocity.y < 0
 
         bounceY =
-            crossTop || crossBottom
+            hitTop || hitBottom
+
+        updatedBall =
+            if bounceY then
+                { ball | velocity = multVec2 velocity (Vec2 1 ball.restitution) }
+            else
+                ball
+
+        updatedScore =
+            if hitTop then
+                model.score + 1
+            else
+                model.score
     in
-        if bounceY then
-            { ball | velocity = multVec2 velocity (Vec2 1 ball.restitution) }
-        else
-            ball
+        { model | ball = updatedBall, score = updatedScore }
 
 
-animate : Float -> Model -> Model
-animate t model =
+updatePaddlePosition : Time -> Paddle -> Paddle
+updatePaddlePosition t paddle =
+    { paddle
+        | position = addVec2 paddle.position (scaleVec2 t paddle.velocity)
+    }
+
+
+updateFrame : Float -> Model -> Model
+updateFrame t model =
     let
         prevPosition =
             model.ball.position
+
+        updatedModel =
+            { model
+                | ball = model.ball |> updateBallPosition t
+                , paddle = model.paddle |> updatePaddlePosition t
+            }
     in
-        { model
-            | ball =
-                model.ball
-                    |> updatePosition t
-                    |> collideWalls prevPosition
-                    |> collidePaddle prevPosition model.paddle
-        }
+        if model.gameOver then
+            model
+        else
+            updatedModel
+                |> collideWalls prevPosition
+                |> collidePaddle prevPosition
+
+
+movePaddle : Paddle -> Float -> Paddle
+movePaddle paddle direction =
+    { paddle | velocity = Vec2 (direction * 1000) 0 }
+
+
+resetGame : Model -> Model
+resetGame model =
+    initModel
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update msg ({ paddle } as model) =
     case msg of
-        KeyMsg code ->
-            case code of
-                _ ->
-                    ( model, Cmd.none )
+        KeyUpMsg keyCode ->
+            ( { model | paddle = movePaddle paddle 0 }, Cmd.none )
+
+        KeyDownMsg keyCode ->
+            let
+                keyChar =
+                    Char.fromCode keyCode
+            in
+                case keyChar of
+                    'A' ->
+                        -- Move Left
+                        ( { model | paddle = movePaddle paddle -1 }, Cmd.none )
+
+                    'D' ->
+                        -- Move Right
+                        ( { model | paddle = movePaddle paddle 1 }, Cmd.none )
+
+                    'R' ->
+                        ( resetGame model, Cmd.none )
+
+                    _ ->
+                        ( model, Cmd.none )
 
         FrameDiffMsg timeDiff ->
             let
+                -- Fake time for now, but look into looping 1/60 (framerate)
+                -- chunks of (Time.inSeconds timeDiff)
                 t =
                     1 / 60
-
-                --Time.inSeconds timeDiff
             in
-                ( animate t model, Cmd.none )
+                ( updateFrame t model, Cmd.none )
 
 
 
@@ -270,7 +347,8 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Keyboard.downs KeyMsg
+        [ Keyboard.downs KeyDownMsg
+        , Keyboard.ups KeyUpMsg
         , AnimationFrame.diffs FrameDiffMsg
         ]
 
@@ -279,21 +357,30 @@ subscriptions model =
 -- VIEW
 
 
-res =
-    1000
-
-
 background : Svg msg
 background =
     rect
-        [ fill "#ccc", x "0", y "0", width "1000", height "1000", rx "10", ry "10" ]
+        [ fill "#ccc"
+        , x "0"
+        , y "0"
+        , width (toString res)
+        , height (toString res)
+        , rx "10"
+        , ry "10"
+        ]
         []
 
 
 labelCustom : List (Svg.Attribute msg) -> Float -> Float -> String -> Svg msg
 labelCustom attrs x_ y_ string =
     text_
-        ([ x (toString x_), y (toString y_), fontFamily "Helvetica", fontSize "32" ] ++ attrs)
+        ([ x (toString x_)
+         , y (toString y_)
+         , fontFamily "Helvetica"
+         , fontSize "32"
+         ]
+            ++ attrs
+        )
         [ text string ]
 
 
@@ -304,16 +391,16 @@ label =
 
 scoreLabel : String -> Svg msg
 scoreLabel =
-    labelCustom [ textAnchor "end" ] 950 50
+    labelCustom [ textAnchor "end" ] (res - margin) margin
 
 
 titleLabel : String -> Svg msg
 titleLabel =
-    label 50 50
+    label margin margin
 
 
-ball : Ball -> Svg msg
-ball { position, radius } =
+ballView : Ball -> Svg msg
+ballView { position, radius } =
     let
         { x, y } =
             position
@@ -323,8 +410,8 @@ ball { position, radius } =
             []
 
 
-paddle : Paddle -> Svg msg
-paddle { position, size } =
+paddleView : Paddle -> Svg msg
+paddleView { position, size } =
     let
         ( x_, y_ ) =
             ( toString position.x, toString position.y )
@@ -335,6 +422,18 @@ paddle { position, size } =
         rect
             [ fill "purple", x x_, y y_, width width_, height height_ ]
             []
+
+
+gameOverLabel : Bool -> Svg msg
+gameOverLabel isOver =
+    if isOver then
+        labelCustom
+            [ textAnchor "middle", fill "red", fontSize "100" ]
+            (res / 2)
+            (res / 2)
+            "Game Over"
+    else
+        label 0 0 ""
 
 
 type VectorKind
@@ -372,10 +471,27 @@ vector kind start offset =
             ( toString start.x, toString start.y, toString end.x, toString end.y )
     in
         [ marker
-            [ id markerName, viewBox "0 0 10 10", refX "10", refY "5", markerUnits "strokeWidth", markerWidth "6", markerHeight "4", orient "auto", stroke (vectorColor kind), fill (vectorColor kind) ]
+            [ id markerName
+            , viewBox "0 0 10 10"
+            , refX "10"
+            , refY "5"
+            , markerUnits "strokeWidth"
+            , markerWidth "6"
+            , markerHeight "4"
+            , orient "auto"
+            , stroke (vectorColor kind)
+            , fill (vectorColor kind)
+            ]
             [ Svg.path [ d "M 0 0 L 10 5 L 0 10 z" ] [] ]
         , line
-            [ x1 x1_, y1 y1_, x2 x2_, y2 y2_, strokeWidth "5", stroke (vectorColor kind), markerEnd markerLink ]
+            [ x1 x1_
+            , y1 y1_
+            , x2 x2_
+            , y2 y2_
+            , strokeWidth "5"
+            , stroke (vectorColor kind)
+            , markerEnd markerLink
+            ]
             []
         ]
 
@@ -387,15 +503,20 @@ vectors object =
         ++ (vector Acceleration object.position (scaleVec2 0.2 object.acceleration))
 
 
+viewBoxString =
+    String.join " " (List.map toString [ 0, 0, 1000, 1000 ])
+
+
 view : Model -> Html Msg
 view model =
     svg
-        [ width "100%", height "100%", viewBox "0 0 1000 1000" ]
+        [ width "100%", height "100%", viewBox viewBoxString, overflow "hidden" ]
         ([ background
          , titleLabel "A Game"
-         , scoreLabel "1000"
-         , ball model.ball
-         , paddle model.paddle
+         , scoreLabel (toString model.score)
+         , ballView model.ball
+         , paddleView model.paddle
+         , gameOverLabel model.gameOver
          ]
-            ++ (vectors model.ball)
+         --    ++ (vectors model.ball)
         )
