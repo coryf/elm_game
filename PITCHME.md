@@ -236,9 +236,18 @@ Sets up the type of the model and initial state.
 
 +++?code=Main.elm&lang=elm
 @[114-135](Model Type)
+@[138-154](Model Initial State)
+
+---
+
+### Update
+
+Called when a message is received and returns the next version of the model.
+
+@fa[arrow-down]
 
 +++?code=Main.elm&lang=elm
-@[138-154](Model Initial State)
+@[333-343](update function)
 
 ---
 
