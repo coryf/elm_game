@@ -149,11 +149,11 @@ addOne 5
   -- 6
 ```
 
-@[1-5] Single tuple param, similar to many other languages
-@[7-11] Currying parameters, standard Elm style
-@[13-14] Nested function calling
-@[16-18] These function type signatures are equivalent
-@[20-24] Example of partial application
+@[1-5](Single tuple param, similar to many other languages)
+@[7-11](Currying parameters, standard Elm style)
+@[13-14](Nested function calling)
+@[16-18](These function type signatures are equivalent)
+@[20-24](Example of partial application)
 
 Note:
 Currying-based functional languages (similar to Haskell and ML)
@@ -197,9 +197,9 @@ add 1 2
 add 3 (add 1 (2))
 ```
 
-@[1] Pipe operator is an alias for function application
-@[3-5] Single function pipe
-@[7-9] Multiple function pipe
+@[1](Pipe operator is an alias for function application)
+@[3-5](Single function pipe)
+@[7-9](Multiple function pipe)
 
 Note:
 Similar to Elixir syntax, but the argument is added to the end because of how
