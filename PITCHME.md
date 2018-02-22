@@ -235,12 +235,10 @@ Sets up the type of the model and initial state.
 @fa[arrow-down]
 
 +++?code=Main.elm&lang=elm
-@[114-135] Model Type
-
-@fa[arrow-down]
+@[114-135](Model Type)
 
 +++?code=Main.elm&lang=elm
-@[138-154] Model Initial State
+@[138-154](Model Initial State)
 
 ---
 
