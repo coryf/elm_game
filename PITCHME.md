@@ -42,7 +42,6 @@ False : Bool
 
 42    : number  -- Int or Float depending on usage
 3.14  : Float
-
 'a'   : Char
 "abc" : String
 
@@ -95,9 +94,7 @@ point =                         -- create a record
 
 point.x                         -- access field
 
-{ point | x = 6 }               -- update a field
-
-{ point |                       -- update many fields
+{ point |                       -- update fields
     x = point.x + 1,
     y = point.y + 1
 }
@@ -152,6 +149,12 @@ addOne 5
   -- 6
 ```
 
+@[1-5] Single tuple param, similar to many other languages
+@[7-11] Currying parameters, standard Elm style
+@[13-14] Nested function calling
+@[16-18] These function type signatures are equivalent
+@[20-24] Example of partial application
+
 Note:
 Currying-based functional languages (similar to Haskell and ML)
 Tuple calling vs Currying
@@ -189,16 +192,17 @@ Let expression define scope constants
 add 1 (2)
 add 1 2
 
-2
-  |> add 1
+2 |> add 1
   |> add 3
 
 add 3 (add 1 (2))
 ```
 
+@[1] Pipe operator is an alias for function application
+
 Note:
 Similar to Elixir syntax, but the argument is added to the end because of how
-currying works.
+currying works. Can reduce parens and lead to better readability.
 
 ---
 
