@@ -225,17 +225,14 @@ collideWalls prevPosition ({ ball } as model) =
 collidePaddle : Vec2 -> Model -> Model
 collidePaddle prevPosition ({ paddle, ball } as model) =
     let
-        { position, radius, velocity } =
-            ball
-
         ballLine =
             ( prevPosition, ball.position )
 
         ( left, top ) =
-            ( paddle.position.x, paddle.position.y - radius )
+            ( paddle.position.x, paddle.position.y - ball.radius )
 
         ( right, bottom ) =
-            ( left + paddle.size.x, top + paddle.size.y + (radius * 2) )
+            ( left + paddle.size.x, top + paddle.size.y + (ball.radius * 2) )
 
         topLine =
             ( Vec2 left top, Vec2 right top )
@@ -244,17 +241,19 @@ collidePaddle prevPosition ({ paddle, ball } as model) =
             ( Vec2 left bottom, Vec2 right bottom )
 
         hitTop =
-            segmentIntersects ballLine topLine && velocity.y > 0
+            segmentIntersects ballLine topLine && ball.velocity.y > 0
 
         hitBottom =
-            segmentIntersects ballLine bottomLine && velocity.y < 0
+            segmentIntersects ballLine bottomLine && ball.velocity.y < 0
 
         bounceY =
             hitTop || hitBottom
 
         updatedBall =
             if bounceY then
-                { ball | velocity = multVec2 velocity (Vec2 1 ball.restitution) }
+                { ball
+                    | velocity = multVec2 ball.velocity (Vec2 1 ball.restitution)
+                }
             else
                 ball
 
@@ -376,7 +375,7 @@ labelCustom attrs x_ y_ string =
     text_
         ([ x (toString x_)
          , y (toString y_)
-         , fontFamily "Helvetica"
+         , fontFamily "Comic Sans MS"
          , fontSize "32"
          ]
             ++ attrs
