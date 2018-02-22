@@ -64,4 +64,9 @@ addOne 5
 * animationFrame - the game "loop"
 
 ## Physics
+* 2D Vector
+    * _Picture_ Direction and magnitude expressed as x,y components
+    * used to describe position, velocity, and acceleration
+    * Faking bounce, reflection of velocity instead of acceleration from force
+* Vector Math
 
