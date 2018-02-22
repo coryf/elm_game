@@ -110,7 +110,6 @@ type alias Location =           -- type aliases for records
 ### Patern Matching
 
 ```elm
-
 point = {x: 10, y: 20}
 {x, y} = point
 
@@ -206,6 +205,26 @@ Similar to Elixir syntax, but the argument is added to the end because of how
 currying works. Can reduce parens and lead to better readability.
 
 ---
+
+## Parts of an Elm Program
+
+- Main function
+- Model
+- Update
+- Subscriptions
+- View
+
+---
+
+### Main function
+
+Entry point for the Elm program. Sets up the inital model state, and sets the
+update, subscription, and view functions.
+
+@fa[arrow-down]
+
++++?code=Main.elm
+@[17-24]
 
 ### Setting up the Game
 * animationFrame - the game "loop"
