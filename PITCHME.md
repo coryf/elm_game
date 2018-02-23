@@ -553,6 +553,8 @@ called restitution that reflects and dampens the velocity.
 
 ## Game Over
 
-- https://github.com/coryf/elm_game
-- https://gitpitch.com/coryf/elm_game
-- https://coryf.github.io/elm_game/
+https://github.com/coryf/elm_game
+
+https://gitpitch.com/coryf/elm_game
+
+https://coryf.github.io/elm_game/
