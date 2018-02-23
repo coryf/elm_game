@@ -435,6 +435,8 @@ View
 - Direction and magnitude expressed as x,y components
 - Line is two Vectors for each endpoint
 
+@fa[arrow-down]
+
 +++
 
 ### Types
@@ -463,6 +465,12 @@ multVec2 v1 v2 = { x = v1.x * v2.x, y = v1.y * v2.y }
 
 ---
 
+### Gravity
+
+A constant downward acceleration. 9.81 m/s^2 near the Earth's surface.
+
+---
+
 ### Position Velocity Acceleration
 
 - position = x,y (magnitude and direction)
@@ -473,11 +481,47 @@ Note:
 Show game with vectors draw. Velocity is the rate and direction of change in
 position. Acceleration is the rate and direction of change in velocity.
 
----
+@fa[arrow-down]
 
-### Gravity
++++
 
-A constant downward acceleration. 9.81 m/s^2 near the Earth's surface.
+```elm
+updateFrame : Float -> Model -> Model
+updateFrame t model =
+    let
+        prevPosition =
+            model.ball.position
+
+        updatedModel =
+            { model
+                | ball = model.ball |> updateBallPosition t
+                , paddle = model.paddle |> updatePaddlePosition t
+            }
+    in
+        if model.gameOver then
+            model
+        else
+            updatedModel
+                |> collideWalls prevPosition
+                |> collidePaddle prevPosition
+```
+@[9](Update the ball position)
+
++++
+
+```elm
+updateBallPosition : Time -> Ball -> Ball
+updateBallPosition t object =
+    { object
+        | position = addVec2 object.position (scaleVec2 t object.velocity)
+        , velocity = addVec2 object.velocity (scaleVec2 t object.acceleration)
+        , acceleration = Vec2 0 (9.8 * 100)
+    }
+```
+
+Note:
+Add velocity to position. Add acceleration to velocity. Set acceleration to
+gravity.
 
 ---
 
