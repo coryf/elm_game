@@ -477,11 +477,11 @@ A constant downward acceleration. 9.81 m/s^2 near the Earth's surface.
 - velocity = meters per second
 - acceleration = meters per second per second
 
+@fa[arrow-down]
+
 Note:
 Show game with vectors draw. Velocity is the rate and direction of change in
 position. Acceleration is the rate and direction of change in velocity.
-
-@fa[arrow-down]
 
 +++
 
