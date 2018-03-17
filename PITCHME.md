@@ -182,7 +182,7 @@ Let expression define scope constants
 
 ---
 
-### Pipelining
+### Piping
 
 ```elm
 -- (arg |> func) is the same as (func arg)
@@ -411,10 +411,6 @@ ballView { position, radius } =
 ### Setting up the Game
 
 animationFrame
-
-@fa[arrow-down]
-
-Subscription
 
 @fa[arrow-down]
 
