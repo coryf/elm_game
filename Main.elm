@@ -511,5 +511,5 @@ view model =
          , paddleView model.paddle
          , gameOverLabel model.gameOver
          ]
-         --    ++ (vectors model.ball)
+            ++ (vectors model.ball)
         )
