@@ -221,9 +221,7 @@ currying works. Can reduce parens and lead to better readability.
 Entry point for the Elm program. Sets up the inital model state, and sets the
 update, subscription, and view functions.
 
-@fa[arrow-down]
-
-+++
+---
 
 ```elm
 main : Program Never Model Msg
@@ -242,9 +240,7 @@ main =
 
 Sets up the type of the model and initial state.
 
-@fa[arrow-down]
-
-+++
+---
 
 ```elm
 type alias Ball =
@@ -290,9 +286,7 @@ init =
 
 Tells Elm which global messages you want to listen for.
 
-@fa[arrow-down]
-
-+++
+---
 
 ```elm
 type Msg
@@ -317,9 +311,7 @@ subscriptions model =
 
 Called when a message is received and returns the next version of the model.
 
-@fa[arrow-down]
-
-+++
+---
 
 ```elm
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -349,9 +341,7 @@ the next model state based on the action taken as a result of the message.
 - Virtual DOM rendering
 - SVG functions
 
-@fa[arrow-down]
-
-+++
+---
 
 ```elm
 view : Model -> Html Msg
@@ -373,7 +363,7 @@ The view function take a model and returns Html Msg type. The returned HTML
 can send messages based on browser events (onClick, onChange), so we need to
 pass-through the Msg type as a component of the Html type thats returned.
 
-+++
+---
 
 ```elm
 view : Model -> Html Msg
@@ -392,7 +382,7 @@ view model =
 ```
 @[8](ballView nested SVG component)
 
-+++
+---
 
 ```elm
 ballView : Ball -> Svg msg
@@ -408,7 +398,7 @@ ballView { position, radius } =
 
 ---
 
-### Setting up the Game
+### "Game Loop"
 
 animationFrame
 
@@ -431,9 +421,7 @@ View
 - Direction and magnitude expressed as x,y components
 - Line is two Vectors for each endpoint
 
-@fa[arrow-down]
-
-+++
+---
 
 ### Types
 
@@ -442,7 +430,7 @@ type alias Vec2 = { x : Float , y : Float }
 type alias Line2 = ( Vec2, Vec2 ) 
 ```
 
-+++
+---
 
 ### Vector Math
 
@@ -473,13 +461,11 @@ A constant downward acceleration. 9.81 m/s^2 near the Earth's surface.
 - velocity = meters per second
 - acceleration = meters per second per second
 
-@fa[arrow-down]
-
 Note:
 Show game with vectors draw. Velocity is the rate and direction of change in
 position. Acceleration is the rate and direction of change in velocity.
 
-+++
+---
 
 ```elm
 updateFrame : Float -> Model -> Model
@@ -503,7 +489,7 @@ updateFrame t model =
 ```
 @[9](Update the ball position)
 
-+++
+---
 
 ```elm
 updateBallPosition : Time -> Ball -> Ball
