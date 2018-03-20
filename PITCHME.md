@@ -206,6 +206,13 @@ currying works. Can reduce parens and lead to better readability.
 
 ---
 
+## The "Game"
+
+Note:
+Show demo of the game: https://coryf.github.io/elm_game/
+
+---
+
 ## Parts of an Elm Program
 
 - Main function
