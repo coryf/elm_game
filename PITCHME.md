@@ -76,7 +76,7 @@ Order list of items of the same type. Insertion is at the head of the list.
 (1.0, True, 'a')
 ("A", ("Nested", "Tuple"))
 
-(1.0, True, 'a') : (Float, String, Char)
+(1.0, True, 'a') : (Float, Bool, Char)
 ```
 
 Note:
@@ -107,7 +107,7 @@ type alias Location =           -- type aliases for records
 
 ---
 
-### Patern Matching
+### Pattern Matching
 
 ```elm
 point = {x: 10, y: 20}
